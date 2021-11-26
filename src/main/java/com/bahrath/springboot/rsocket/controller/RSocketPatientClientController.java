@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +23,7 @@ public class RSocketPatientClientController {
     }
 
     @GetMapping("/request-response")
-    public Mono<ClinicalPatientData> requestResponse(Patient patient) {
+    public Mono<ClinicalPatientData> requestResponse(@RequestBody Patient patient) {
         logger.info("Sending the rsocket request for patient: "+patient);
         return rSocketRequester.route("get-patient-data")
                 .data(patient)
