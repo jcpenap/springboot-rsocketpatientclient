@@ -30,4 +30,12 @@ public class RSocketPatientClientController {
                 .retrieveMono(ClinicalPatientData.class);
     }
 
+    @GetMapping("/patient-checkout")
+    public Mono<Void> fireAndForget(@RequestBody Patient patient) {
+        logger.info("Sending the rsocket request for patient: "+patient);
+        return rSocketRequester.route("patient-checkout")
+                .data(patient)
+                .retrieveMono(Void.class);
+    }
+
 }
