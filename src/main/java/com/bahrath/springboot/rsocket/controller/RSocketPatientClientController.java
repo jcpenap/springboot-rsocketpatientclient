@@ -1,14 +1,18 @@
 package com.bahrath.springboot.rsocket.controller;
 
+import com.bahrath.springboot.rsocket.model.Claim;
 import com.bahrath.springboot.rsocket.model.ClinicalPatientData;
 import com.bahrath.springboot.rsocket.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -36,6 +40,15 @@ public class RSocketPatientClientController {
         return rSocketRequester.route("patient-checkout")
                 .data(patient)
                 .retrieveMono(Void.class);
+    }
+
+    @GetMapping("/request-stream")
+    public ResponseEntity<Flux<Claim>> requestStream() {
+        Flux<Claim> data = rSocketRequester.route("claim-stream")
+                .retrieveFlux(Claim.class);
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(data);
     }
 
 }
